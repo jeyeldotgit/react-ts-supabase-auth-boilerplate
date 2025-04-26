@@ -1,16 +1,32 @@
 import { useState } from "react";
+
+// Components
 import Email from "../../components/auth/Email";
 import Password from "../../components/auth/Password";
 import ConfirmPassword from "../../components/auth/ConfirmPassword";
 import SubmitButton from "../../components/auth/SubmitButton";
+
+// Notification Component
+import { ToastContainer, toast } from "react-toastify";
+
+// Custom Hooks
 import useAuthForm from "../../hooks/useAuthForm";
 import useAuthError from "../../hooks/useAuthError";
+
+// Types
 import { UserType } from "../../types/UserType";
+
+// API
+import { signUpNewUser } from "../../api/Auth";
 
 const SignUp = () => {
   // Form Data Variables
   const { email, setEmail, password, setPassword } = useAuthForm();
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+  // Handle Email Confirmation Sent
+  const notify = () =>
+    toast.info("Email Confirmation is sent to your email. Please Verify");
 
   // Toggle Show Password States
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -25,13 +41,7 @@ const SignUp = () => {
     }
   };
 
-  // Handle Form Error
-  const formData: UserType = {
-    email,
-    password,
-  };
-
-  // Error message states for each field
+  // Handle Form Error States with Custom hook
   const {
     emailError,
     passwordError,
@@ -72,10 +82,16 @@ const SignUp = () => {
   };
 
   // Handle Form Submission
-  const handleFormSubmit = (e: React.FormEvent) => {
+  const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     formValidation();
-    console.log(formData);
+
+    const formData: UserType = {
+      email,
+      password,
+    };
+    // Call signUpNewUser function
+    await signUpNewUser(formData);
   };
 
   return (
@@ -109,7 +125,8 @@ const SignUp = () => {
           />
 
           {/* Submit Button */}
-          <SubmitButton label="Sign Up" />
+          <SubmitButton label="Sign Up" notify={notify} />
+          <ToastContainer position="top-center" />
         </form>
       </div>
     </div>
