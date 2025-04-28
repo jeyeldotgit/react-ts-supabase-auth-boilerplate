@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // Components
 import Email from "../../components/auth/Email";
@@ -24,10 +25,6 @@ const SignUp = () => {
   const { email, setEmail, password, setPassword } = useAuthForm();
   const [confirmPassword, setConfirmPassword] = useState<string>("");
 
-  // Handle Email Confirmation Sent
-  const notify = () =>
-    toast.info("Email Confirmation is sent to your email. Please Verify");
-
   // Toggle Show Password States
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -40,6 +37,9 @@ const SignUp = () => {
       setShowConfirmPassword((prev) => !prev);
     }
   };
+
+  // Navigation hook
+  const navigate = useNavigate();
 
   // Handle Form Error States with Custom hook
   const {
@@ -82,7 +82,7 @@ const SignUp = () => {
   };
 
   // Handle Form Submission
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     formValidation();
 
@@ -91,7 +91,18 @@ const SignUp = () => {
       password,
     };
     // Call signUpNewUser function
-    await signUpNewUser(formData);
+    try {
+      const res = await signUpNewUser(formData);
+      if (res?.success) {
+        toast.success(res.message);
+      }
+      if (res?.success === false) {
+        toast.error(res.message);
+      }
+    } catch (error) {
+      console.error("Error during sign up:", error);
+      return;
+    }
   };
 
   return (
@@ -102,7 +113,7 @@ const SignUp = () => {
           Create an Account
         </h1>
 
-        <form className="space-y-4" onSubmit={handleFormSubmit}>
+        <form className="space-y-4" onSubmit={handleSignup}>
           {/* Email */}
           <Email email={email} setEmail={setEmail} emailError={emailError} />
 
@@ -124,8 +135,19 @@ const SignUp = () => {
             confirmPasswordError={confirmPasswordError}
           />
 
+          {/* Link to Sign Up */}
+          <div className="text-center text-sm text-gray-600">
+            Don't have an account?{" "}
+            <span
+              onClick={() => navigate("/signup")}
+              className="text-blue-600 hover:underline cursor-pointer font-medium"
+            >
+              Sign up now
+            </span>
+          </div>
+
           {/* Submit Button */}
-          <SubmitButton label="Sign Up" notify={notify} />
+          <SubmitButton label="Sign Up" />
           <ToastContainer position="top-center" />
         </form>
       </div>

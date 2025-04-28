@@ -1,6 +1,8 @@
 import { User } from "@supabase/supabase-js";
 import { useAuth } from "../../hooks/useAuth";
 
+import Sidebar from "../../components/dashboard/Sidebar";
+
 const Home = () => {
   const { loading, session } = useAuth();
 
@@ -11,11 +13,12 @@ const Home = () => {
   }
 
   return (
-    <div>
-      <h1>Welcome to dashboard</h1>
-      <h1>Welcome, {user.email}</h1>
-      <p>Your User ID: {user.id}</p>
-      <p>Account Created At: {user.created_at}</p>
+    <div className="w-screen h-screen bg-neutral-100 flex">
+      <Sidebar />
+      <div className="flex flex-col items-center justify-center h-full">
+        <h1 className="text-2xl font-bold">Welcome to the Dashboard</h1>
+        {user && <p className="mt-4 text-lg">Hello, {user.email}!</p>}
+      </div>
     </div>
   );
 };

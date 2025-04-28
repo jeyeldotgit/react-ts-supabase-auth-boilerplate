@@ -3,26 +3,23 @@ import { UserType } from "../types/UserType";
 
 const signUpNewUser = async (formData: UserType) => {
   try {
-    const { data, error } = await supabase.auth.signUp({
+    const { error } = await supabase.auth.signUp({
       email: formData.email,
       password: formData.password,
       options: {
-        emailRedirectTo: `${window.location.origin}/login`, // or wherever your login page is
+        emailRedirectTo: `${window.location.origin}/dashboard`,
       },
     });
 
     if (error) {
       console.error("Error Sign Up: ", error.message);
-      return;
+      return { success: false, message: error.message };
     }
 
-    if (data) {
-      return {
-        success: true,
-        message:
-          "Sign up successful. Please check your email for confirmation.",
-      };
-    }
+    return {
+      success: true,
+      message: "Sign up successful. Please check your email for confirmation.",
+    };
   } catch (err: unknown) {
     if (err instanceof Error) {
       console.error(err.message);
@@ -56,4 +53,23 @@ const signInUser = async (formData: UserType) => {
   }
 };
 
-export { signInUser, signUpNewUser };
+const signOutUser = async () => {
+  try {
+    const { error } = await supabase.auth.signOut();
+
+    if (error) {
+      console.error("Sign out error:", error.message);
+      return { success: false, message: error.message };
+    }
+    return { success: true, message: "Sign out successful" };
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+      return { success: false, message: err.message };
+    }
+    console.error(err);
+    return { success: false, message: "Unexpected error. Please try again." };
+  }
+};
+
+export { signInUser, signUpNewUser, signOutUser };
