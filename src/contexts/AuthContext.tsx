@@ -1,13 +1,15 @@
 // src/contexts/AuthContext.tsx
 import { createContext } from "react";
-import { User } from "@supabase/supabase-js";
+import { Session } from "@supabase/supabase-js";
 
 interface AuthContextType {
-  user: User | null;
+  session: Session | null;
   loading: boolean;
+  isAuthenticated: boolean;
 }
 
 export const AuthContext = createContext<AuthContextType>({
-  user: null,
   loading: true,
+  session: null,
+  isAuthenticated: false,
 });

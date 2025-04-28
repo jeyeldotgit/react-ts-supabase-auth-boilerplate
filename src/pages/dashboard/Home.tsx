@@ -1,14 +1,13 @@
+import { User } from "@supabase/supabase-js";
 import { useAuth } from "../../hooks/useAuth";
 
 const Home = () => {
-  const { user, loading } = useAuth();
+  const { loading, session } = useAuth();
+
+  const user = session?.user as User; // Type assertion to User
 
   if (loading) {
-    return <p>Loading...</p>; // Or a spinner
-  }
-
-  if (!user) {
-    return <p>No user found. Please login again.</p>; // fallback
+    return <div>Loading...</div>; // Show a loading state while fetching the session
   }
 
   return (

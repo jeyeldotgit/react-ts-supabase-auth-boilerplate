@@ -13,7 +13,7 @@ import useAuthError from "../../hooks/useAuthError";
 import { UserType } from "../../types/UserType";
 
 // Login Auth API
-import { signInUser } from "../../api/Auth";
+import { signInUser } from "../../api/AuthCalls";
 
 // Notification Hooks
 import { ToastContainer, toast } from "react-toastify";
@@ -65,7 +65,7 @@ const Login = () => {
 
     const res = await signInUser(formData);
     if (res.success) {
-      toast.success(`Welcome ${res.user?.email}`);
+      toast.success("Sign In Successful! Redirecting to Dashboard...");
       setTimeout(() => {
         navigate("/dashboard");
       }, 3000); // 3000 ms = 3 seconds

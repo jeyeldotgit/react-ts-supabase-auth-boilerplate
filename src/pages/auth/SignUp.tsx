@@ -17,7 +17,7 @@ import useAuthError from "../../hooks/useAuthError";
 import { UserType } from "../../types/UserType";
 
 // API
-import { signUpNewUser } from "../../api/Auth";
+import { signUpNewUser } from "../../api/AuthCalls";
 
 const SignUp = () => {
   // Form Data Variables
