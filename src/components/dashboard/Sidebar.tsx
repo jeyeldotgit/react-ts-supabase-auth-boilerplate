@@ -1,5 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { signOutUser } from "../../api/AuthCalls";
+
+import useUserProfile from "../../hooks/useUserProfile";
+
 import {
   MenuIcon,
   HomeIcon,
@@ -7,9 +11,10 @@ import {
   SettingsIcon,
   LogOutIcon,
 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 const Sidebar = () => {
+  const { userProfile } = useUserProfile();
+
   const navigate = useNavigate();
   // State to manage sidebar open/close (for mobile devices)
   const [isOpen, setIsOpen] = useState(false);
@@ -61,7 +66,7 @@ const Sidebar = () => {
         {/* Top Section */}
         <div>
           {/* Logo section */}
-          <div className="flex items-center gap-2 px-3 py-4 mb-6 border-b border-gray-200">
+          <div className="flex items-center px-3 py-4 mb-6 border-b border-gray-200">
             <h1 className="text-xl font-bold text-gray-800">Logoipsum</h1>
           </div>
 
@@ -78,8 +83,8 @@ const Sidebar = () => {
 
             {/* Profile Link */}
             <a
-              href="#"
-              className="flex items-center gap-3 text-gray-700 hover:text-black transition"
+              onClick={() => navigate("/profile")}
+              className="flex items-center gap-3 text-gray-700 hover:text-black transition cursor-pointer"
             >
               <UserIcon size={20} />
               <span className="text-base font-medium">Profile</span>
@@ -108,7 +113,7 @@ const Sidebar = () => {
         <div className="flex items-center gap-3 px-3 pt-3 border-t border-gray-200">
           {/* Profile Image */}
           <img
-            src="https://via.placeholder.com/40"
+            src={`${userProfile?.avatar as string}`}
             alt="Profile"
             className="w-10 h-10 rounded-full object-cover"
           />
@@ -116,9 +121,9 @@ const Sidebar = () => {
           {/* User Info */}
           <div className="flex flex-col">
             <span className="text-gray-800 font-semibold text-sm">
-              John Doe
+              {`${userProfile?.first_name} ${userProfile?.last_name}`}
             </span>
-            <span className="text-gray-500 text-xs">Admin</span>
+            <span className="text-gray-500 text-xs">{userProfile?.role}</span>
           </div>
         </div>
       </div>

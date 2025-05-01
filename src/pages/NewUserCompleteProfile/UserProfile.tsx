@@ -1,30 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
-import { useAuth } from "../../hooks/useAuth";
+import useUserProfile from "../../hooks/useUserProfile";
 import { Camera, ImagePlus } from "lucide-react";
-
 import SubmitButton from "../../components/auth/SubmitButton";
 
 import UserProfileType from "../../types/UserProfileType";
-
 import { updateProfile } from "../../api/Profile";
+import { useAuth } from "../../hooks/useAuth";
+
+import { useNavigate } from "react-router-dom";
 
 const inputStyles =
   "px-4 py-2 border rounded-md focus:outline-none focus:ring-2 border-gray-300 focus:ring-gray-500";
 
-const NewUserCompletion = () => {
+const UserProfile = () => {
   const { session } = useAuth();
+  const { userProfile, userId } = useUserProfile();
 
-  const userId = session?.user.id;
+  const navigate = useNavigate();
 
-  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null | File>(
+    null
+  );
 
   const [formData, setFormData] = useState<UserProfileType>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     avatar: "",
     role: "User",
   });
+
+  // Prefill formData when userProfile loads
+  useEffect(() => {
+    if (userProfile) {
+      setFormData((prev) => ({
+        ...prev,
+        first_name: userProfile.first_name || "",
+        last_name: userProfile.last_name || "",
+        role: userProfile.role || "User",
+        avatar: userProfile.avatar || "",
+      }));
+      setAvatarPreview(userProfile.avatar || null); // Set avatar preview if available
+    }
+  }, [userProfile]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -36,20 +54,20 @@ const NewUserCompletion = () => {
   const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setFormData((prev) => ({ ...prev, avatar: file })); // ✅ Store actual File
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPreview(previewUrl); // ✅ Store blob URL for preview
+      setFormData((prev) => ({ ...prev, avatar: file })); // Store actual File
+      const previewUrl = URL.createObjectURL(file); // Create URL for preview
+      setAvatarPreview(previewUrl); // Store blob URL for preview
     }
   };
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log("User profile submitted:", formData);
-    // Submit formData to backend or context here
     try {
       const res = await updateProfile(formData, userId);
       if (res.success) {
         console.log("Profile updated successfully:", res.message);
+        navigate("/dashboard"); // Redirect to dashboard or another page
       } else {
         console.error("Profile update failed:", res.message);
       }
@@ -76,7 +94,6 @@ const NewUserCompletion = () => {
             </label>
 
             <div className="relative w-24 h-24">
-              {/* Hidden File Input */}
               <input
                 id="avatar"
                 type="file"
@@ -85,16 +102,14 @@ const NewUserCompletion = () => {
                 className="hidden"
                 required
               />
-
-              {/* Label as clickable area */}
               <label
                 htmlFor="avatar"
                 className="cursor-pointer w-full h-full flex items-center justify-center border border-gray-300 rounded-full overflow-hidden relative group hover:ring-2 hover:ring-gray-400 transition"
               >
-                {formData.avatar ? (
+                {avatarPreview ? (
                   <>
                     <img
-                      src={avatarPreview ?? undefined}
+                      src={`${avatarPreview}`}
                       alt="Avatar Preview"
                       className="w-full h-full object-cover"
                     />
@@ -112,8 +127,8 @@ const NewUserCompletion = () => {
             </div>
           </div>
 
-          {/* Email (Read-only) */}
-          <div className="flex flex-col w-full ">
+          {/* Email */}
+          <div className="flex flex-col w-full">
             <label htmlFor="email" className="text-sm text-gray-600 mb-1">
               Email
             </label>
@@ -130,14 +145,14 @@ const NewUserCompletion = () => {
 
           {/* First Name */}
           <div className="flex flex-col w-full">
-            <label htmlFor="firstName" className="text-sm text-gray-600 mb-1">
+            <label htmlFor="first_name" className="text-sm text-gray-600 mb-1">
               First Name
             </label>
             <input
               type="text"
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
               className={inputStyles}
               placeholder="First Name"
@@ -147,14 +162,14 @@ const NewUserCompletion = () => {
 
           {/* Last Name */}
           <div className="flex flex-col w-full">
-            <label htmlFor="lastName" className="text-sm text-gray-600 mb-1">
+            <label htmlFor="last_name" className="text-sm text-gray-600 mb-1">
               Last Name
             </label>
             <input
               type="text"
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
               onChange={handleChange}
               className={inputStyles}
               placeholder="Last Name"
@@ -186,4 +201,4 @@ const NewUserCompletion = () => {
   );
 };
 
-export default NewUserCompletion;
+export default UserProfile;

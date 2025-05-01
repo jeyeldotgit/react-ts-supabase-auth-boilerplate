@@ -1,6 +1,6 @@
 type UserProfileType = {
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   avatar: File | string;
   role: "Admin" | "User";
 };

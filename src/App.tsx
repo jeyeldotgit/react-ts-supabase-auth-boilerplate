@@ -1,10 +1,10 @@
 import { Routes, Route } from "react-router-dom";
 import SignUp from "./pages/auth/SignUp";
 import Login from "./pages/auth/Login";
-import Home from "./pages/dashboard/Home";
+import Home from "./pages/Admin/dashboard/Home";
 import { AuthProvider } from "./contexts/AuthProvider";
 import ProtectedRoute from "./components/router/ProtectedRoute";
-import NewUserCompletion from "./pages/NewUserCompleteProfile/NewUserCompletion";
+import UserProfile from "./pages/NewUserCompleteProfile/UserProfile";
 
 const App = () => {
   return (
@@ -16,7 +16,7 @@ const App = () => {
 
         {/* PROTECTED ROUTES */}
         <Route element={<ProtectedRoute />}>
-          <Route path="/user-profile" element={<NewUserCompletion />}></Route>
+          <Route path="/profile" element={<UserProfile />}></Route>
           <Route path="/dashboard" element={<Home />}></Route>
         </Route>
       </Routes>

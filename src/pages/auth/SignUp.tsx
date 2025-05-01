@@ -84,7 +84,7 @@ const SignUp = () => {
   // Handle Form Submission
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
-    formValidation();
+    if (!formValidation()) return;
 
     const formData: UserType = {
       email,

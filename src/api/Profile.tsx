@@ -29,8 +29,8 @@ export const updateUserProfile = async (
   const { error: updateError } = await supabase
     .from("profiles")
     .update({
-      first_name: formData.firstName,
-      last_name: formData.lastName,
+      first_name: formData.first_name,
+      last_name: formData.last_name,
       avatar: avatarUrl,
       role: formData.role,
     })
